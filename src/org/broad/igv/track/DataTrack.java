@@ -409,7 +409,7 @@ public abstract class DataTrack extends AbstractTrack {
 
 
     /**
-     * Return the average zcore over the interval.
+     * Return the average score over the interval.
      *
      * @param chr
      * @param start

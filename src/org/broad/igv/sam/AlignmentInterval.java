@@ -178,6 +178,21 @@ public class AlignmentInterval extends Locus {
         return maxCount;
     }
 
+    /**
+     * Find the maximum counts over the specified interval
+     * TODO This does a manual scan, probably very slow
+     * @param start
+     * @param end
+     * @return
+     */
+    public int getMaxCount(int start, int end){
+        int max = 0;
+        for(int pos=start; pos < end; pos++){
+            max = Math.max(max, counts.getTotalCount(pos));
+        }
+        return max;
+    }
+
     public int getTotalCount(int pos) {
         AlignmentCounts c = counts;
         if (pos >= c.getStart() && pos < c.getEnd()) {

@@ -54,7 +54,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -154,7 +153,7 @@ public class CoverageTrack extends AbstractTrack {
      */
     @Subscribe
     public void receiveDataLoaded(DataLoadedEvent e){
-        rescale(e.context.getReferenceFrame());
+        rescale();
         e.context.getReferenceFrame().getEventBus().post(new ViewChange.Result());
     }
 
@@ -165,23 +164,23 @@ public class CoverageTrack extends AbstractTrack {
             for(ReferenceFrame frame: frameList){
                 intervals.add(dataManager.getLoadedInterval(frame.getName()));
             }
-            rescaleIntervals(intervals);
+            rescaleIntervals(frameList, intervals);
         }
     }
 
-    public void rescale(ReferenceFrame frame) {
-        if (autoScale & dataManager != null) {
-            rescaleIntervals(Arrays.asList(dataManager.getLoadedInterval(frame.getName())));
-        }
-    }
-
-    private void rescaleIntervals(List<AlignmentInterval> intervals) {
+    private void rescaleIntervals(List<ReferenceFrame> frameList, List<AlignmentInterval> intervals) {
         if (intervals == null || intervals.size() == 0) return;
 
+        int idx = -1;
         int max = 10;
         for(AlignmentInterval interval: intervals){
-            if(interval == null) continue;
-            max = Math.max(max, interval.getMaxCount());
+            idx++;
+            ReferenceFrame frame = frameList.get(idx);
+            if(interval == null || frame == null) continue;
+
+            int start = (int) frame.getOrigin();
+            int end = ((int) frame.getEnd()) + 1;
+            max = Math.max(max, interval.getMaxCount(start, end));
         }
         DataRange.Type type = getDataRange().getType();
         super.setDataRange(new DataRange(0, 0, max));
@@ -202,6 +201,7 @@ public class CoverageTrack extends AbstractTrack {
                 interval = dataManager.getLoadedInterval(context.getReferenceFrame().getName());
             }
             if (interval != null) {
+                rescale();
                 if (interval.contains(context.getChr(), (int) context.getOrigin(), (int) context.getEndLocation())) {
                     intervalRenderer.paint(context, rect, interval.getCounts());
                 }
@@ -214,6 +214,7 @@ public class CoverageTrack extends AbstractTrack {
             int zoom = context.getZoom();
             List<LocusScore> scores = dataSource.getSummaryScoresForRange(chr, start, end, zoom);
             if (scores != null) {
+                rescale();
                 dataSourceRenderer.render(scores, context, rect, this);
             }
 
