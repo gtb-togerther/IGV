@@ -104,7 +104,7 @@ public class SparseAlignmentCounts extends BaseAlignmentCounts {
     }
 
 
-    public int getMaxCount() {
+    public int getMaxCount(int startPos, int endPos) {
         return maxCount;
     }
 

@@ -42,8 +42,13 @@ public class DenseAlignmentCounts extends BaseAlignmentCounts {
     int[] del;
     int[] ins;
     private int[] totalQ;
-    private int maxCount = 0;
 
+    /**
+     * We store the maximum number of counts over intervals
+     * For autoscaling, doesn't have to be super precise
+     */
+    protected static int MAX_COUNT_INTERVAL = 100;
+    protected int[] maxCounts;
 
     public DenseAlignmentCounts(int start, int end, AlignmentTrack.BisulfiteContext bisulfiteContext) {
         super(start, end, bisulfiteContext);
@@ -69,18 +74,27 @@ public class DenseAlignmentCounts extends BaseAlignmentCounts {
         del = new int[nPts];
         ins = new int[nPts];
         totalQ = new int[nPts];
+
+        maxCounts = new int[(nPts / MAX_COUNT_INTERVAL) + 1];
     }
 
     public int getNumberOfPoints() {
         return end - start;
     }
 
-    public void finish() {
-        // Noop
+    @Override
+    public int getMaxCount(int strt, int end) {
+        int startMCI = (strt-this.start) / MAX_COUNT_INTERVAL;
+        int endMCI = (end-this.start) / MAX_COUNT_INTERVAL;
+        int max = maxCounts[startMCI];
+        for(int mci= startMCI+1; mci <= endMCI; mci++){
+            max = Math.max(max, maxCounts[mci]);
+        }
+        return max;
     }
 
-    public int getMaxCount() {
-        return maxCount;
+    public void finish() {
+        // Noop
     }
 
     public int getTotalCount(int pos) {
@@ -385,7 +399,10 @@ public class DenseAlignmentCounts extends BaseAlignmentCounts {
             totalQ[offset] = totalQ[offset] + q;
 
             int tmp = posTotal[offset] + negTotal[offset];
-            maxCount = tmp > maxCount ? tmp : maxCount;
+            int maxCountInt = offset / MAX_COUNT_INTERVAL;
+            if(tmp > maxCounts[maxCountInt]){
+                maxCounts[maxCountInt] = tmp;
+            }
         }
     }
 

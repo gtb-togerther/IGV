@@ -45,7 +45,15 @@ public interface AlignmentCounts extends Feature {
 
     int getNumberOfPoints();
 
-    int getMaxCount();
+    /**
+     * Return the approximate maximum number of counts in the specified interval.
+     * It is recommended this number be set too high rather than too low,
+     * it is not required to be completely accurate. Intended for use in autoscaling
+     * @param startPos
+     * @param endPos
+     * @return
+     */
+    int getMaxCount(int startPos, int endPos);
 
     String getValueStringAt(int pos);
 

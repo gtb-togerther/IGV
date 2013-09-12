@@ -32,7 +32,6 @@ public class AlignmentInterval extends Locus {
     private static Logger log = Logger.getLogger(AlignmentInterval.class);
 
     Genome genome;
-    private int maxCount = 0;
     private AlignmentCounts counts;
     private LinkedHashMap<String, List<Row>> groupedAlignmentRows;  // The alignments
     private SpliceJunctionHelper spliceJunctionHelper;
@@ -57,7 +56,6 @@ public class AlignmentInterval extends Locus {
 
         //reference = genome.getSequence(chr, start, end);
         this.counts = counts;
-        this.maxCount = counts.getMaxCount();
 
         this.spliceJunctionHelper = spliceJunctionHelper;
         this.downsampledIntervals = downsampledIntervals;
@@ -174,24 +172,24 @@ public class AlignmentInterval extends Locus {
         return 0;
     }
 
-    public int getMaxCount() {
-        return maxCount;
+    public int getMaxCount(int startPos, int endPos) {
+        return this.counts.getMaxCount(startPos, endPos);
     }
 
-    /**
-     * Find the maximum counts over the specified interval
-     * TODO This does a manual scan, probably very slow
-     * @param start
-     * @param end
-     * @return
-     */
-    public int getMaxCount(int start, int end){
-        int max = 0;
-        for(int pos=start; pos < end; pos++){
-            max = Math.max(max, counts.getTotalCount(pos));
-        }
-        return max;
-    }
+//    /**
+//     * Find the maximum counts over the specified interval
+//     * TODO This does a manual scan, probably very slow
+//     * @param start
+//     * @param end
+//     * @return
+//     */
+//    public int getMaxCount(int start, int end){
+//        int max = 0;
+//        for(int pos=start; pos < end; pos++){
+//            max = Math.max(max, counts.getTotalCount(pos));
+//        }
+//        return max;
+//    }
 
     public int getTotalCount(int pos) {
         AlignmentCounts c = counts;

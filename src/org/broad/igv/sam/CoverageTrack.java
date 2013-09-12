@@ -201,8 +201,8 @@ public class CoverageTrack extends AbstractTrack {
                 interval = dataManager.getLoadedInterval(context.getReferenceFrame().getName());
             }
             if (interval != null) {
-                rescale();
                 if (interval.contains(context.getChr(), (int) context.getOrigin(), (int) context.getEndLocation())) {
+                    rescale();
                     intervalRenderer.paint(context, rect, interval.getCounts());
                 }
             }
@@ -214,7 +214,6 @@ public class CoverageTrack extends AbstractTrack {
             int zoom = context.getZoom();
             List<LocusScore> scores = dataSource.getSummaryScoresForRange(chr, start, end, zoom);
             if (scores != null) {
-                rescale();
                 dataSourceRenderer.render(scores, context, rect, this);
             }
 
