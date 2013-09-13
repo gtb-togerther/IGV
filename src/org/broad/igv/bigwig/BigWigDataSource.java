@@ -234,7 +234,7 @@ public class BigWigDataSource extends AbstractDataSource implements FeatureSourc
         String querySeq = tmp == null ? chr : tmp;
 
         if (reader.isBigBedFile() || bbLevel > 1 || (bbLevel == 1 && (reductionLevel / scale) < 2)) {
-            ArrayList<LocusScore> scores = new StatList<LocusScore>(1000, FeatureUtils.SCORE_COMPARATOR);
+            ArrayList<LocusScore> scores = new StatList(1000);
             ZoomLevelIterator zlIter = reader.getZoomLevelIterator(bbLevel, querySeq, start, querySeq, end, false);
             while (zlIter.hasNext()) {
                 ZoomDataRecord rec = zlIter.next();

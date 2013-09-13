@@ -239,8 +239,7 @@ public class CoverageTrack extends AbstractTrack {
     private void calcNewMax(List<LocusScore> scores){
         float max = 10;
         if(scores instanceof StatList){
-            log.debug("is statlist");
-            LocusScore maxLS = ((StatList<LocusScore>) scores).getMax();
+            LocusScore maxLS = ((StatList) scores).getMax();
             max = Math.max(maxLS.getScore(), max);
         }else{
             for(LocusScore score: scores){

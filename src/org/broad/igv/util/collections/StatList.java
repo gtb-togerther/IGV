@@ -11,9 +11,10 @@
 
 package org.broad.igv.util.collections;
 
+import org.broad.igv.feature.LocusScore;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 
 /**
  * List which keeps track of statistics on members.
@@ -25,30 +26,28 @@ import java.util.Comparator;
  * @author jacob
  * @date 2013-Sep-13
  */
-public class StatList<T> extends ArrayList<T>{
+public class StatList extends ArrayList<LocusScore>{
 
-    private Comparator<T> comparator;
-    private T max;
+    private LocusScore max;
 
-    public StatList(int elements, Comparator<T> comparator){
+    public StatList(int elements){
         super(elements);
-        this.comparator = comparator;
     }
 
     @Override
-    public boolean add(T el){
+    public boolean add(LocusScore el){
         updateStats(el);
         return super.add(el);
     }
 
     @Override
-    public void add(int index, T el){
+    public void add(int index, LocusScore el){
         updateStats(el);
         super.add(index, el);
     }
 
     @Override
-    public T remove(int index) {
+    public LocusScore remove(int index) {
         throw new UnsupportedOperationException("Cannot remove from StatList");
     }
 
@@ -58,20 +57,20 @@ public class StatList<T> extends ArrayList<T>{
     }
 
     @Override
-    public boolean addAll(Collection<? extends T> els){
-        for(T el: els){
+    public boolean addAll(Collection<? extends LocusScore> els){
+        for(LocusScore el: els){
             updateStats(el);
         }
         return super.addAll(els);
     }
 
-    private void updateStats(T el){
-        if(max == null || this.comparator.compare(el, max) > 0){
+    private void updateStats(LocusScore el){
+        if(max == null || el.getScore() > max.getScore()){
             this.max = el;
         }
     }
 
-    public T getMax() {
+    public LocusScore getMax() {
         return max;
     }
 

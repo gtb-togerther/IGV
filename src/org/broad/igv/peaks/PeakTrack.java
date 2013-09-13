@@ -573,7 +573,7 @@ public class PeakTrack extends AbstractTrack {
 
         public List<LocusScore> getSummaryScoresForRange(String chr, int startLocation, int endLocation, int zoom) {
 
-            List<LocusScore> scores = new StatList<LocusScore>(1000, FeatureUtils.SCORE_COMPARATOR);
+            List<LocusScore> scores = new StatList(1000);
 
 
             if (scoreThreshold <= 0 && foldChangeThreshold <= 0) {
