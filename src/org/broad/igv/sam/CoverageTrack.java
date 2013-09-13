@@ -45,6 +45,7 @@ import org.broad.igv.ui.util.FileDialogUtils;
 import org.broad.igv.ui.util.MessageUtils;
 import org.broad.igv.util.ResourceLocator;
 import org.broad.igv.util.StringUtils;
+import org.broad.igv.util.collections.StatList;
 
 import javax.swing.*;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -182,6 +183,10 @@ public class CoverageTrack extends AbstractTrack {
             int end = ((int) frame.getEnd()) + 1;
             max = Math.max(max, interval.getMaxCount(start, end));
         }
+        setNewMax(max);
+    }
+
+    private void setNewMax(float max){
         DataRange.Type type = getDataRange().getType();
         super.setDataRange(new DataRange(0, 0, max));
         getDataRange().setType(type);
@@ -201,7 +206,7 @@ public class CoverageTrack extends AbstractTrack {
                 interval = dataManager.getLoadedInterval(context.getReferenceFrame().getName());
             }
             if (interval != null) {
-                if (interval.contains(context.getChr(), (int) context.getOrigin(), (int) context.getEndLocation())) {
+                if (interval.overlaps(context.getChr(), (int) context.getOrigin(), (int) context.getEndLocation())) {
                     rescale();
                     intervalRenderer.paint(context, rect, interval.getCounts());
                 }
@@ -214,11 +219,35 @@ public class CoverageTrack extends AbstractTrack {
             int zoom = context.getZoom();
             List<LocusScore> scores = dataSource.getSummaryScoresForRange(chr, start, end, zoom);
             if (scores != null) {
+                if(autoScale){
+                    calcNewMax(scores);
+                }
                 dataSourceRenderer.render(scores, context, rect, this);
             }
 
         }
         drawBorder(context, rect);
+    }
+
+    /**
+     * Find the maximum score of all {@code LocusScore}s.
+     * Worst case scans all of {@code scores}, best case
+     * {@code scores} is a {@link StatList} and
+     * max can be found quickly
+     * @param scores
+     */
+    private void calcNewMax(List<LocusScore> scores){
+        float max = 10;
+        if(scores instanceof StatList){
+            log.debug("is statlist");
+            LocusScore maxLS = ((StatList<LocusScore>) scores).getMax();
+            max = Math.max(maxLS.getScore(), max);
+        }else{
+            for(LocusScore score: scores){
+                max = Math.max(score.getScore(), max);
+            }
+        }
+        setNewMax(max);
     }
 
     private void drawBorder(RenderContext context, Rectangle rect) {
@@ -803,9 +832,12 @@ public class CoverageTrack extends AbstractTrack {
 
                 autoScale = autoscaleItem.isSelected();
                 dataRangeItem.setEnabled(!autoScale);
-                if (autoScale) {
-                    rescale();
-                }
+                //Not necessary to rescale here, will happen on rendering
+                //Also need to check that interval and frame are the same location,
+                //best done elsewhere
+//                if (autoScale) {
+//                    rescale();
+//                }
                 IGV.getInstance().repaintDataPanels();
 
             }

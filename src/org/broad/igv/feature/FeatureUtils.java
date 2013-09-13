@@ -478,4 +478,14 @@ public class FeatureUtils {
             return o1.getStart() - o2.getStart();
         }
     };
+
+    /**
+     * Compares LocusScores by their score
+     */
+    public static final Comparator<LocusScore> SCORE_COMPARATOR = new Comparator<LocusScore>() {
+        @Override
+        public int compare(LocusScore o1, LocusScore o2) {
+            return (int) Math.signum(o1.getScore() - o2.getScore());
+        }
+    };
 }

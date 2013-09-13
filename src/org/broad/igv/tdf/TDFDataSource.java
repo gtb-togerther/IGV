@@ -23,12 +23,14 @@ import org.broad.igv.data.CompositeScore;
 import org.broad.igv.data.CoverageDataSource;
 import org.broad.igv.data.NamedScore;
 import org.broad.igv.feature.Chromosome;
+import org.broad.igv.feature.FeatureUtils;
 import org.broad.igv.feature.LocusScore;
 import org.broad.igv.feature.genome.Genome;
 import org.broad.igv.track.TrackType;
 import org.broad.igv.track.WindowFunction;
 import org.broad.igv.ui.panel.FrameManager;
 import org.broad.igv.util.collections.LRUCache;
+import org.broad.igv.util.collections.StatList;
 
 import java.util.*;
 
@@ -184,7 +186,7 @@ public class TDFDataSource implements CoverageDataSource {
                 }
             }
 
-            scores = new ArrayList(1000);
+            scores = new StatList<LocusScore>(1000, FeatureUtils.SCORE_COMPARATOR);
             if (tiles != null && tiles.size() > 0) {
                 for (TDFTile tile : tiles) {
 
@@ -231,7 +233,7 @@ public class TDFDataSource implements CoverageDataSource {
 
     private List<LocusScore> computeSummaryScores(String chr, int startLocation, int endLocation, double scale) {
 
-        List<LocusScore> scores = new ArrayList(1000);
+        List<LocusScore> scores = new StatList<LocusScore>(1000, FeatureUtils.SCORE_COMPARATOR);
 
         String dsName = "/" + chr + "/raw";
 
@@ -363,7 +365,7 @@ public class TDFDataSource implements CoverageDataSource {
             return getSummaryScores(querySeq, startLocation, endLocation, zoom);
         } else {
 
-            ArrayList scores = new ArrayList();
+            List<LocusScore> scores = new StatList<LocusScore>(10, FeatureUtils.SCORE_COMPARATOR);
 
             // TODO -- this whole section could be computed once and stored,  it is only a function of the genome, chr, and zoom level.
             double tileWidth = 0;

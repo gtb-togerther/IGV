@@ -14,7 +14,9 @@ package org.broad.igv.data;
 import org.broad.igv.feature.FeatureUtils;
 import org.broad.igv.feature.LocusScore;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**
@@ -63,56 +65,6 @@ public class LocusScoreUtils {
             workingList = overlappingFeatures;
         }
         return segmentedLists;
-    }
-
-    /**
-     * Sort the feature list by ascending start value
-     */
-    public static void sortFeatureList(List<? extends LocusScore> features) {
-
-        Collections.sort(features, new Comparator() {
-
-            public int compare(Object o1, Object o2) {
-                LocusScore f1 = (LocusScore) o1;
-                LocusScore f2 = (LocusScore) o2;
-                return (int) (f1.getStart() - f2.getStart());
-            }
-        });
-    }
-
-    public static LocusScore getFeatureAt(double position, double minWidth,
-                                          List<? extends LocusScore> features) {
-
-        int startIdx = 0;
-        int endIdx = features.size();
-
-        while (startIdx != endIdx) {
-            int idx = (startIdx + endIdx) / 2;
-
-            LocusScore feature = features.get(idx);
-
-            // Correct for zero vs 1 based coordinates.
-            // TODO -- document this.
-            double effectiveStart = feature.getStart() + 1;
-            if (position >= effectiveStart) {
-
-                double effectiveWidth = Math.max(minWidth, feature.getEnd() - feature.getStart());
-
-                if (position <= effectiveStart + effectiveWidth) {
-                    return features.get(idx);
-                } else {
-                    if (idx == startIdx) {
-                        return null;
-                    } else {
-                        startIdx = idx;
-                    }
-                }
-            } else {
-                endIdx = idx;
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -199,4 +151,5 @@ public class LocusScoreUtils {
 
 
     }
+
 }

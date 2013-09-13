@@ -27,6 +27,7 @@ import org.broad.igv.util.LongRunningTask;
 import org.broad.igv.util.NamedRunnable;
 import org.broad.igv.util.ParsingUtils;
 import org.broad.igv.util.ResourceLocator;
+import org.broad.igv.util.collections.StatList;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -572,7 +573,7 @@ public class PeakTrack extends AbstractTrack {
 
         public List<LocusScore> getSummaryScoresForRange(String chr, int startLocation, int endLocation, int zoom) {
 
-            List<LocusScore> scores = new ArrayList(1000);
+            List<LocusScore> scores = new StatList<LocusScore>(1000, FeatureUtils.SCORE_COMPARATOR);
 
 
             if (scoreThreshold <= 0 && foldChangeThreshold <= 0) {
@@ -604,7 +605,7 @@ public class PeakTrack extends AbstractTrack {
                         }
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    log.error(e.getMessage(), e);
                 }
                 return scores;
             }

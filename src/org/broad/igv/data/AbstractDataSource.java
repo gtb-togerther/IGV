@@ -15,12 +15,14 @@ package org.broad.igv.data;
 import org.apache.log4j.Logger;
 import org.broad.igv.Globals;
 import org.broad.igv.feature.Chromosome;
+import org.broad.igv.feature.FeatureUtils;
 import org.broad.igv.feature.LocusScore;
 import org.broad.igv.feature.genome.Genome;
 import org.broad.igv.tdf.Accumulator;
 import org.broad.igv.track.WindowFunction;
 import org.broad.igv.ui.panel.FrameManager;
 import org.broad.igv.util.collections.LRUCache;
+import org.broad.igv.util.collections.StatList;
 
 import java.util.*;
 
@@ -118,7 +120,7 @@ public abstract class AbstractDataSource implements DataSource {
 
         List<SummaryTile> tiles = getSummaryTilesForRange(chr, startLocation, endLocation, zoom);
 
-        scores = new ArrayList(tiles.size() * 700);
+        scores = new StatList<LocusScore>(tiles.size() * 700, FeatureUtils.SCORE_COMPARATOR);
 
         for (SummaryTile tile : tiles) {
             scores.addAll(tile.getScores());
