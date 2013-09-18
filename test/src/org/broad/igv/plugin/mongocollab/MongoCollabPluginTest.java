@@ -49,6 +49,7 @@ public class MongoCollabPluginTest extends AbstractHeadlessTest {
     public static void setUpClass() throws Exception{
         MONGO_EXEC_PATH = System.getProperty(MONGO_EXEC_KEY, MONGO_EXEC_PATH);
         Assume.assumeTrue(MONGO_EXEC_PATH != null && MONGO_EXEC_PATH.length() > 0);
+        System.out.println("Mongo exec path: " + MONGO_EXEC_PATH);
         startTestMongo();
         assumeTestDBRunning();
     }
